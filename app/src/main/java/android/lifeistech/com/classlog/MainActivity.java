@@ -1,0 +1,104 @@
+package android.lifeistech.com.classlog;
+
+import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class MainActivity extends AppCompatActivity {
+
+    static final int REQUEST_PERMISSION = 0;
+    static final int REQUEST_CODE_CAMERA = 1;
+
+    Button button; // サンプルボタン「数理統計学」
+    private Uri uri;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        button = findViewById(R.id.button);
+        button.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(getApplicationContext(), "長押し", Toast.LENGTH_SHORT).show();
+                return true;    // 戻り値をtrueにするとOnClickイベントは発生しない(falseだと最後にイベント発生)
+            }
+        });
+    }
+
+
+    // 「数理統計学」がクリックされたとき = 「数理統計学」の撮影開始
+    public void onClickSubject(View view){
+        // 科目名取得 ＆ トースト
+        //Toast.makeText(MainActivity.this, ((Button)view).getText(), Toast.LENGTH_LONG).show();
+
+        // カメラ起動　ー＞　撮影　ー＞　保存（ ー＞連続撮影 ）　ー＞　科目別アルバム(DetailActivity)へ
+
+        // WRITE_EXTERNAL_IMAGE が未許可の場合
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            //WRITE_EXTERNAL_STORAGEの許可を求めるダイアログを表示
+            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION);
+            return;
+        }
+
+        //日時データを元に文字列を形成
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        String nowStr = dateFormat.format(new Date(System.currentTimeMillis()));
+        //保存する画像のファイル名を生成
+        String fileName = "ClassLog_" + nowStr +".jpg";
+
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, fileName); // 画像ファイル名を設定
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg"); // 画像ファイルの種類を設定
+
+        ContentResolver resolver = getContentResolver();
+        uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); // URI作成
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(intent, REQUEST_CODE_CAMERA);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        if(requestCode == REQUEST_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            // 再度カメラアプリを起動
+            onClickSubject(button);
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent){
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == RESULT_OK){
+            if (requestCode == REQUEST_CODE_CAMERA){
+                //Bitmap bmp = (Bitmap) intent.getExtras().get("data");
+                //imageView.setImageBitmap(bmp);
+                Toast.makeText(MainActivity.this, "画像を保存しました", Toast.LENGTH_LONG).show();
+            }
+        } else if (resultCode == RESULT_CANCELED){
+            // キャンセルされたらToastを表示
+            Toast.makeText(MainActivity.this, "CANCELED", Toast.LENGTH_LONG).show();
+        }
+    }
+}
