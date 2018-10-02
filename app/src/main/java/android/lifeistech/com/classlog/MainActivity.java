@@ -88,9 +88,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void execute(Realm bgRealm){
                 ImageData image = realm.createObject(ImageData.class);
-                image.setTimestamp(nowStr);
-                image.setMedium(uri.toString()); // URLとして保存
-                image.setLarge(uri.toString());
+                image.timestamp = nowStr;
+                image.medium = uri.toString();
+                image.large = uri.toString();
+                image.name = "撮りたてほやほや";
             }
         });
 
