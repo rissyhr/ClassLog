@@ -12,15 +12,23 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import io.realm.Realm;
+
 public class MainActivity extends AppCompatActivity {
+
+    //Realm型の変数を宣言
+    public Realm realm;
 
     static final int REQUEST_PERMISSION = 0;
     static final int REQUEST_CODE_CAMERA = 1;
@@ -33,12 +41,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Realm.init(this);
+        realm = Realm.getDefaultInstance();
+
         button = findViewById(R.id.button);
         button.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Toast.makeText(getApplicationContext(), "長押し", Toast.LENGTH_SHORT).show();
-                return true;    // 戻り値をtrueにするとOnClickイベントは発生しない(falseだと最後にイベント発生)
+                return true;    // 戻り値をtrueにするとOnClickイベントは発生しない(falseだと最後にonClickイベント発生)
             }
         });
     }
@@ -61,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         //日時データを元に文字列を形成
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        String nowStr = dateFormat.format(new Date(System.currentTimeMillis()));
+        final String nowStr = dateFormat.format(new Date(System.currentTimeMillis()));
         //保存する画像のファイル名を生成
         String fileName = "ClassLog_" + nowStr +".jpg";
 
@@ -72,8 +83,21 @@ public class MainActivity extends AppCompatActivity {
         ContentResolver resolver = getContentResolver();
         uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); // URI作成
 
+        Log.d("realm","realmの実行前");
+        realm.executeTransaction(new Realm.Transaction(){
+            @Override
+            public void execute(Realm bgRealm){
+                ImageData image = realm.createObject(ImageData.class);
+                image.setTimestamp(nowStr);
+                image.setMedium(uri.toString()); // URLとして保存
+                image.setLarge(uri.toString());
+            }
+        });
+
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        intent.putExtra("timestamp", nowStr);
         startActivityForResult(intent, REQUEST_CODE_CAMERA);
     }
 
@@ -85,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
         super.onActivityResult(requestCode, resultCode, intent);
@@ -94,11 +117,26 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == REQUEST_CODE_CAMERA){
                 //Bitmap bmp = (Bitmap) intent.getExtras().get("data");
                 //imageView.setImageBitmap(bmp);
+
                 Toast.makeText(MainActivity.this, "画像を保存しました", Toast.LENGTH_LONG).show();
+
+                Intent intent_main = new Intent(this, DetailActivity.class);
+                intent_main.putExtra("imageUri", uri.toString());
+                // 科目情報もIntentに持たせる
+                startActivity(intent_main); // 科目別アルバム(DetailActivity)へ飛ぶ
             }
         } else if (resultCode == RESULT_CANCELED){
             // キャンセルされたらToastを表示
             Toast.makeText(MainActivity.this, "CANCELED", Toast.LENGTH_LONG).show();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //realmを閉じる
+        realm.close();
+    }
 }
+
