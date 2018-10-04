@@ -48,7 +48,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
     public void onBindViewHolder(MyViewHolder holder, int position) {
         ImageData imageData = images.get(position);
 
-        Glide.with(mContext).load(imageData.medium)
+        Glide.with(mContext).load(imageData.getUri())
                 .thumbnail(0.5f)
                 .transition(withCrossFade())
                 //.diskCacheStrategy(DiskCacheStrategy.ALL)

@@ -5,8 +5,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -17,9 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,13 +22,12 @@ import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Realm型の変数を宣言
     public Realm realm;
 
     static final int REQUEST_PERMISSION = 0;
     static final int REQUEST_CODE_CAMERA = 1;
 
-    Button button; // サンプルボタン「数理統計学」
+    Button button; // サンプルボタン「数理統計学」   配列でどうにかする
     private Uri uri;
 
     @Override
@@ -41,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Realm.init(this);
         realm = Realm.getDefaultInstance();
 
         button = findViewById(R.id.button);
@@ -56,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     // 「数理統計学」がクリックされたとき = 「数理統計学」の撮影開始
-    public void onClickSubject(View view){
+    public void onClickSubject(final View view){
         // 科目名取得 ＆ トースト
         //Toast.makeText(MainActivity.this, ((Button)view).getText(), Toast.LENGTH_LONG).show();
 
@@ -83,22 +76,26 @@ public class MainActivity extends AppCompatActivity {
         ContentResolver resolver = getContentResolver();
         uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); // URI作成
 
-        Log.d("realm","realmの実行前");
+
         realm.executeTransaction(new Realm.Transaction(){
             @Override
-            public void execute(Realm bgRealm){
-                ImageData image = realm.createObject(ImageData.class);
-                image.timestamp = nowStr;
-                image.medium = uri.toString();
-                image.large = uri.toString();
-                image.name = "撮りたてほやほや";
+            public void execute(Realm realm){
+                /* イメージの作成 (撮影前に、すべての情報を保存)   -> キャンセルされたときの処理も追加　or DetailActivityでこの処理を行う    */
+                ImageData image  = realm.createObject(ImageData.class);
+                image.setTimestamp(nowStr);
+                image.setUri(uri.toString());
+                image.setSubject(((Button)view).getText() + "");    // このままだと科目名称が変更されたら保存先も変わってしまう
+                Log.d("subject", image.getSubject());
+
+                image.setName(((Button)view).getText() + "_" + nowStr);
+                realm.copyToRealm(image);
             }
         });
 
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        intent.putExtra("timestamp", nowStr);
+
         startActivityForResult(intent, REQUEST_CODE_CAMERA);
     }
 

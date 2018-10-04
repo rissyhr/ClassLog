@@ -36,10 +36,10 @@ public class SlideshowDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_image_slider, container, false);
-        viewPager = (ViewPager) v.findViewById(R.id.viewpager);
-        lblCount = (TextView) v.findViewById(R.id.lbl_count);
-        lblTitle = (TextView) v.findViewById(R.id.title);
-        lblDate = (TextView) v.findViewById(R.id.date);
+        viewPager = v.findViewById(R.id.viewpager);
+        lblCount = v.findViewById(R.id.lbl_count);
+        lblTitle = v.findViewById(R.id.title);
+        lblDate = v.findViewById(R.id.date);
 
         images = (ArrayList<ImageData>) getArguments().getSerializable("images");
         selectedPosition = getArguments().getInt("position");
@@ -84,8 +84,8 @@ public class SlideshowDialogFragment extends DialogFragment {
         lblCount.setText((position + 1) + " of " + images.size());
 
         ImageData imageData = images.get(position);
-        lblTitle.setText(imageData.name);
-        lblDate.setText(imageData.timestamp);
+        lblTitle.setText(imageData.getName());
+        lblDate.setText("ここを編集可能にする予定");
     }
 
     @Override
@@ -112,7 +112,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
             ImageData imageData= images.get(position);
 
-            Glide.with(getActivity()).load(imageData.large)
+            Glide.with(getActivity()).load(imageData.getUri())
                     .thumbnail(0.5f)
                     .transition(withCrossFade())
                     //.diskCacheStrategy(DiskCacheStrategy.ALL)

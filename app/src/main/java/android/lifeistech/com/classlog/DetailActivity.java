@@ -7,14 +7,14 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -23,8 +23,6 @@ public class DetailActivity extends AppCompatActivity {
     private GalleryAdapter mAdapter;
     private RecyclerView recyclerView;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,9 +30,6 @@ public class DetailActivity extends AppCompatActivity {
 
         // realmを開く
         realm = Realm.getDefaultInstance();
-
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
         recyclerView = findViewById(R.id.recycler_view);
 
@@ -68,53 +63,46 @@ public class DetailActivity extends AppCompatActivity {
         fetchImages();
     }
 
-    // 一枚の画像を取得
+    // 撮影した科目の画像一覧を取得 (imagesに,imageDataAlbumの中身を入れる)
     private void fetchImages() {
-        images.clear();
-
-        // 撮影した写真のURIを取得
-        Intent intent = getIntent();
-        final String myUri = intent.getStringExtra("imageUri");
-
-        // 撮影した写真を保存するRealmObjectの作成 & 保存
         realm.executeTransaction(new Realm.Transaction(){
             @Override
-            public void execute(Realm bgRealm){
+            public void execute(Realm realm){
+                Intent intent = getIntent();
+                ImageData new_image = realm.where(ImageData.class).equalTo("uri",
+                        intent.getStringExtra("imageUri")).findFirst(); // 撮影した画像データを取得
+                Log.d("new_image", new_image.getSubject());
 
-                // この時点では、MainActivityで扱ったRealmオブジェクトと不一致！　URIで連結させる必要あり。
+                ImageDataList data = realm.where(ImageDataList.class).equalTo("subject",
+                        new_image.getSubject()).findFirst(); // 科目名に対応したアルバムを指定
+
+                if(data == null){
+                    data = new ImageDataList();   // 該当する科目のアルバムが未作成であれば、新規作成
+                    Log.d("ぬる","塗る");
+                    data.setSubject(new_image.getSubject());
+                    Log.d("登録ほやほや", new_image.getSubject());
+                    RealmList<ImageData> firstAlbum = new RealmList<>();
+                    data.setAlbum(firstAlbum);
+                }
+
+                RealmList<ImageData> lists = data.getAlbum();
+//                if(lists == null) lists = new ArrayList<>();
+                lists.add(new_image);
+                data.setAlbum(lists);
+                realm.copyToRealm(data);
 
 
-                ImageData image = realm.where(ImageData.class).equalTo("medium",
-                        getIntent().getStringExtra("imageUri")).findFirst();
-                //memo.updateDate = updateDate;
-                //image.setSmall(url.getString("small"));
+/*
+                List<ImageData> lists = new ArrayList<>();
+                lists.add(new_image);*/
 
-                //image.setTimestamp(object.getString("timestamp"));
-                images.add(image);
-                // adapterの中でうまくURIをURLにかえる　new URL(uri.toString())
-
-
+                images.clear();
+                for(ImageData image : lists){
+                    images.add(image); // 表示される画像一覧(images)に、albumの中身を反映
+                }
+                Log.d("おしえてちょ", String.valueOf(images.size()));
             }
         });
-
-/*                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject object = response.getJSONObject(i);
-                                Image image = new Image();
-                                image.setName(object.getString("name"));
-
-                                JSONObject url = object.getJSONObject("url");
-                                image.setSmall(url.getString("small"));
-                                image.setMedium(url.getString("medium"));
-                                image.setLarge(url.getString("large"));
-                                image.setTimestamp(object.getString("timestamp"));
-
-                                images.add(image);
-
-                            } catch (JSONException e) {
-                                Log.e(TAG, "Json parsing error: " + e.getMessage());
-                            }
-                        }*/
         mAdapter.notifyDataSetChanged();
     }
 
@@ -123,9 +111,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        //realmを閉じる
-        realm.close();
+        realm.close(); // realmを閉じる
+
     }
 }
-
-
