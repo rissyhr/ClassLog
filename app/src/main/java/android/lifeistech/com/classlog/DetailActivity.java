@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -108,7 +110,6 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         realm.close(); // realmを閉じる
 
     }

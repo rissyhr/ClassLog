@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -30,7 +32,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
         }
     }
 
-
     public GalleryAdapter(Context context, List<ImageData> images) {
         mContext = context;
         this.images = images;
@@ -38,9 +39,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+/*        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.gallery_thumbnail, parent, false);*/
+
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.gallery_thumbnail, parent, false);
-
         return new MyViewHolder(itemView);
     }
 
@@ -48,11 +51,18 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
     public void onBindViewHolder(MyViewHolder holder, int position) {
         ImageData imageData = images.get(position);
 
+/*        Glide.with(mContext).load(imageData.getUri())
+                .thumbnail(0.5f)
+                .transition(withCrossFade())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)   -> cannot resolveになる
+                .into(holder.thumbnail);*/
+
         Glide.with(mContext).load(imageData.getUri())
                 .thumbnail(0.5f)
                 .transition(withCrossFade())
-                //.diskCacheStrategy(DiskCacheStrategy.ALL)
+                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)) // デフォルト
                 .into(holder.thumbnail);
+
     }
 
     @Override
@@ -105,7 +115,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
         }
+
+
     }
+
+
 }
+
