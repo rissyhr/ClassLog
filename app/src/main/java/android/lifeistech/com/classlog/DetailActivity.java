@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -71,16 +70,15 @@ public class DetailActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 ImageData new_image = realm.where(ImageData.class).equalTo("uri",
                         intent.getStringExtra("imageUri")).findFirst(); // 撮影した画像データを取得
-                Log.d("new_image", new_image.getSubject());
+                Log.d("new_image.getSubject()", new_image.getSubject());
 
                 ImageDataList data = realm.where(ImageDataList.class).equalTo("subject",
                         new_image.getSubject()).findFirst(); // 科目名に対応したアルバムを指定
 
                 if(data == null){
                     data = new ImageDataList();   // 該当する科目のアルバムが未作成であれば、新規作成
-                    Log.d("ぬる","塗る");
                     data.setSubject(new_image.getSubject());
-                    Log.d("登録ほやほや", new_image.getSubject());
+                    Log.d("new_image.getSubject()", new_image.getSubject());
                     RealmList<ImageData> firstAlbum = new RealmList<>();
                     data.setAlbum(firstAlbum);
                 }
@@ -100,7 +98,7 @@ public class DetailActivity extends AppCompatActivity {
                 for(ImageData image : lists){
                     images.add(image); // 表示される画像一覧(images)に、albumの中身を反映
                 }
-                Log.d("おしえてちょ", String.valueOf(images.size()));
+                Log.d("images.size", String.valueOf(images.size()));
             }
         });
         mAdapter.notifyDataSetChanged();

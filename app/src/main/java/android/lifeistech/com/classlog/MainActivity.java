@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         realm = Realm.getDefaultInstance();
 
-        button = findViewById(R.id.button);
+        button = findViewById(R.id.sbj00);
         button.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

@@ -9,7 +9,7 @@ public class ImageData extends RealmObject {
     private String subject; // 科目(ジャンル)
     private String name; // サムネタイトル
 
-    // コンストラクタを設置するとエラー？
+    // コンストラクタを設置するとエラー
 
     public String getUri(){
         return uri;

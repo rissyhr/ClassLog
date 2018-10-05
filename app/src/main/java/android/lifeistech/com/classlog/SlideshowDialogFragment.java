@@ -80,6 +80,7 @@ public class SlideshowDialogFragment extends DialogFragment {
         }
     };
 
+    // 選択された写真を一枚表示
     private void displayMetaInfo(int position) {
         lblCount.setText((position + 1) + " of " + images.size());
 
