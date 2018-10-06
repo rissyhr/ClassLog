@@ -63,7 +63,7 @@ public class DetailActivity extends AppCompatActivity {
         fetchImages();
     }
 
-    // 撮影した科目の画像一覧を取得 (imagesに,imageDataAlbumの中身を入れる)
+    // 撮影した写真を、その科目の画像一覧に追加 & その画像一覧を取得 (imagesに,imageDataAlbumの中身を入れる)
     private void fetchImages() {
         realm.executeTransaction(new Realm.Transaction(){
             @Override
@@ -78,7 +78,12 @@ public class DetailActivity extends AppCompatActivity {
 
                 if(data == null){
                     data = new ImageDataList();   // 該当する科目のアルバムが未作成であれば、新規作成
-                    data.setSubject(new_image.getSubject());
+
+
+                    //メソッドの変更によりエラー。あとで修正。
+                    //data.setSubject(new_image.getSubject());
+
+
                     Log.d("new_image.getSubject()", new_image.getSubject());
                     RealmList<ImageData> firstAlbum = new RealmList<>();
                     data.setAlbum(firstAlbum);
@@ -88,6 +93,7 @@ public class DetailActivity extends AppCompatActivity {
 //                if(lists == null) lists = new ArrayList<>();
                 lists.add(new_image);
                 data.setAlbum(lists);
+
                 realm.copyToRealm(data);
 
 

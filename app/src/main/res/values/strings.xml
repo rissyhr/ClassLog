@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ClassLog</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="subject">講義名</string>
+    <string name="teacher">担当教員名</string>
+    <string name="room">教室名</string>
 </resources>
