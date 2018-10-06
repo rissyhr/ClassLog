@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -110,7 +111,20 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        deleteDirectoryTree(getApplicationContext().getCacheDir()); // 今までのキャッシュを削除
         realm.close(); // realmを閉じる
+    }
 
+    /**
+     * Deletes a directory tree recursively.
+     */
+    public static void deleteDirectoryTree(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : fileOrDirectory.listFiles()) {
+                deleteDirectoryTree(child);
+            }
+        }
+
+        fileOrDirectory.delete();
     }
 }

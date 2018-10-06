@@ -163,7 +163,6 @@
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:layout_weight="1"
-                        android:onClick="onClickSubject"
                         android:text="数理統計学" />
 
                     <Button
@@ -394,6 +393,13 @@
 
 
                     <Button
+                        android:id="@+id/sbj50"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:visibility="gone" />
+
+                    <Button
                         android:id="@+id/sbj51"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -423,12 +429,6 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
 
-                    <Button
-                        android:id="@+id/sbj56"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:visibility="gone" />
                 </LinearLayout>
 
                 <LinearLayout

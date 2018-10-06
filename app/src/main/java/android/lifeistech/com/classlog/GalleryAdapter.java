@@ -34,8 +34,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
 
     public GalleryAdapter(Context context, List<ImageData> images) {
         mContext = context;
-        this.images = images;
+
+
+        this.images = images; // これから表示する画像リストを指定
     }
+
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
