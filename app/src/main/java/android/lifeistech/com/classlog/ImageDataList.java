@@ -5,7 +5,7 @@ import io.realm.RealmObject;
 
 public class ImageDataList extends RealmObject {
 
-    // cf. https://qiita.com/boohbah/items/b515a16aa0034f622a85
+    /* 各科目の"アルバム" */
 
     private String subject;
     private RealmList<ImageData> album;
@@ -17,8 +17,6 @@ public class ImageDataList extends RealmObject {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-
-
 
 
     public RealmList<ImageData> getAlbum(){

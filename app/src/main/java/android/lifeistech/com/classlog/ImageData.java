@@ -4,12 +4,12 @@ import io.realm.RealmObject;
 
 public class ImageData extends RealmObject {
 
-    private String uri; // 保存場所
+   /* "アルバム"に保存される”写真” */
+
+    private String uri; // 画像の保存場所
     private String timestamp; // 撮影日時
     private String subject; // 科目(ジャンル)
     private String name; // サムネタイトル
-
-    // コンストラクタを設置するとエラー
 
     public String getUri(){
         return uri;

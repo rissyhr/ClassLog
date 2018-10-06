@@ -20,7 +20,7 @@ import java.util.Date;
 
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public Realm realm;
 
@@ -68,94 +68,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View v) {
-
         final View view = v;
-        switch (view.getId()) {
-            case R.id.sbj00:
-                // 科目名取得 ＆ トースト
-                //Toast.makeText(MainActivity.this, ((Button)view).getText(), Toast.LENGTH_LONG).show();
-
-                // カメラ起動　ー＞　撮影　ー＞　保存（ ー＞連続撮影 ）　ー＞　科目別アルバム(DetailActivity)へ
-
-                // WRITE_EXTERNAL_IMAGE が未許可の場合
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    //WRITE_EXTERNAL_STORAGEの許可を求めるダイアログを表示
-                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                    ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION);
-                    return;
-                }
-
-                //日時データを元に文字列を形成
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-                final String nowStr = dateFormat.format(new Date(System.currentTimeMillis()));
-                //保存する画像のファイル名を生成
-                String fileName = "ClassLog_" + nowStr + ".jpg";
-
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.TITLE, fileName); // 画像ファイル名を設定
-                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg"); // 画像ファイルの種類を設定
-
-                ContentResolver resolver = getContentResolver();
-                uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); // URI作成
-
-
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        /* イメージの作成 (撮影前に、すべての情報を保存)   -> キャンセルされたときの処理も追加　or DetailActivityでこの処理を行う    */
-                        ImageData image = realm.createObject(ImageData.class);
-                        image.setTimestamp(nowStr);
-                        image.setUri(uri.toString());
-                        image.setSubject(((Button) view).getText() + "");    // このままだと科目名称が変更されたら保存先も変わってしまう
-                        Log.d("subject", image.getSubject());
-
-                        image.setName(((Button) view).getText() + "_" + nowStr);
-                        realm.copyToRealm(image);
-                    }
-                });
-
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-
-                startActivityForResult(intent, REQUEST_CODE_CAMERA);
-
-                break;
-
-            case R.id.sbj01:
-
-                break;
-
-            case R.id.sbj02:
-
-                break;
-        }
-    }
-
-
-
-
-
-    // 「数理統計学」がクリックされたとき = 「数理統計学」の撮影開始
-    public void onClickSubject(final View view) {
-        // 科目名取得 ＆ トースト
-        //Toast.makeText(MainActivity.this, ((Button)view).getText(), Toast.LENGTH_LONG).show();
-
-        // カメラ起動　ー＞　撮影　ー＞　保存（ ー＞連続撮影 ）　ー＞　科目別アルバム(DetailActivity)へ
 
         // WRITE_EXTERNAL_IMAGE が未許可の場合
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            //WRITE_EXTERNAL_STORAGEの許可を求めるダイアログを表示
             String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION);
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION); //WRITE_EXTERNAL_STORAGEの許可を求めるダイアログを表示
             return;
         }
 
-        //日時データを元に文字列を形成
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss"); // 日時データを元に文字列を形成
         final String nowStr = dateFormat.format(new Date(System.currentTimeMillis()));
-        //保存する画像のファイル名を生成
-        String fileName = "ClassLog_" + nowStr + ".jpg";
+        String fileName = "ClassLog_" + nowStr + ".jpg"; // 保存する画像のファイル名を生成
 
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, fileName); // 画像ファイル名を設定
@@ -164,6 +88,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ContentResolver resolver = getContentResolver();
         uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); // URI作成
 
+        Log.d("view.getID", String.valueOf(view.getId()));
+
+        //switch (view.getId()) {
+
+
+        // カメラ起動　ー＞　撮影　ー＞　保存（ ー＞連続撮影 ）　ー＞　科目別アルバム(DetailActivity)へ
 
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -172,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ImageData image = realm.createObject(ImageData.class);
                 image.setTimestamp(nowStr);
                 image.setUri(uri.toString());
-                image.setSubject(((Button) view).getText() + "");    // このままだと科目名称が変更されたら保存先も変わってしまう
+                image.setSubject(view.getId() + "");
                 Log.d("subject", image.getSubject());
 
                 image.setName(((Button) view).getText() + "_" + nowStr);
@@ -183,15 +113,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-
         startActivityForResult(intent, REQUEST_CODE_CAMERA);
+
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // 再度カメラアプリを起動
-            onClickSubject(button);
+            onClick(button);
         }
     }
 
