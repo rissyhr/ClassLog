@@ -20,16 +20,21 @@ import java.util.Date;
 
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,View.OnLongClickListener {
 
     public Realm realm;
 
     static final int REQUEST_PERMISSION = 0;
     static final int REQUEST_CODE_CAMERA = 1;
 
-    Button button; // サンプルボタン「数理統計学」   配列でどうにかする
+    View clicked_button;
     Button buttons[][];
     private Uri uri;
+
+
+    //  デフォルトの時間割をここに保存　ー＞　アルバム、写真の新規作成時に紐づける
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         realm = Realm.getDefaultInstance();
 
         setButtons(); //
-        buttons[0][0].setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(getApplicationContext(), "長押し", Toast.LENGTH_SHORT).show();
-                return true;    // 戻り値をtrueにするとOnClickイベントは発生しない(falseだと最後にonClickイベント発生)
-            }
-        });
     }
 
     public void setButtons() {
@@ -62,19 +60,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < ids.length; i++) {
             for (int j = 0; j < ids[0].length; j++) {
                 buttons[i][j] = findViewById(ids[i][j]);
-                buttons[i][j].setOnClickListener(this);
+                buttons[i][j].setOnClickListener(this); // タップを探知
+                buttons[i][j].setOnLongClickListener(this); // 長押しを探知
             }
         }
     }
 
+    /* タップ： ギャラリー(アルバム)の起動*/
+    @Override
     public void onClick(View v) {
-        final View view = v;
+        Toast.makeText(getApplicationContext(), "長押し", Toast.LENGTH_SHORT).show();
+    }
+
+
+    /* 長押し：カメラの起動 */
+    @Override
+    public boolean onLongClick(final View view) {
 
         // WRITE_EXTERNAL_IMAGE が未許可の場合
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
             ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION); //WRITE_EXTERNAL_STORAGEの許可を求めるダイアログを表示
-            return;
+
+            clicked_button = view; // Clickされた科目に対応するviewをクラスフィールドに保存
+
+            return true;  // 戻り値をtrueにするとOnClickイベントは発生しない(falseだと最後にonClickイベント発生)
         }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss"); // 日時データを元に文字列を形成
@@ -89,8 +99,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); // URI作成
 
         Log.d("view.getID", String.valueOf(view.getId()));
-
-        //switch (view.getId()) {
 
 
         // カメラ起動　ー＞　撮影　ー＞　保存（ ー＞連続撮影 ）　ー＞　科目別アルバム(DetailActivity)へ
@@ -115,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, REQUEST_CODE_CAMERA);
 
+
+        return true;    // 戻り値をtrueにするとOnClickイベントは発生しない(falseだと最後にonClickイベント発生)
     }
 
 
@@ -122,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // 再度カメラアプリを起動
-            onClick(button);
+            onLongClick(clicked_button);
         }
     }
 

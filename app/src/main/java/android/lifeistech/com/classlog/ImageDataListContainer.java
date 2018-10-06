@@ -7,13 +7,13 @@ public class ImageDataListContainer extends RealmObject {
 
     /* 複数のアルバム(ImageDataList)を所持する時間割 */
 
-    private RealmList<ImageDataList> ClassSchedule;
+    private RealmList<ImageDataList> classSchedule;
 
     public RealmList<ImageDataList> getClassSchedule() {
-        return ClassSchedule;
+        return classSchedule;
     }
 
     public void setClassSchedule(RealmList<ImageDataList> classSchedule) {
-        ClassSchedule = classSchedule;
+        this.classSchedule = classSchedule;
     }
 }
