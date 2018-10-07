@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int[][] ids; // ボタンのレイアウトidを格納
     private int[] d_ids, t_ids; // 目盛のレイアウトidを格納
 
-
     private Uri uri; // 撮影する写真の保存先
+    private ImageData image; // 撮影する写真に関する情報
 
     private ImageDataListContainer mSchedule; // アプリ起動時に表示される時間割(を持つコンテナ) 。　-> アルバム/写真の新規作成時に紐づける
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /* 未実装 */
-    // 右上の設定タブを押したら新たにImageDetaListContainerのインスタンスが作成され、
+    // 右上の設定タブを押したら新たにImageDataListContainerのインスタンスが作成され、
     // いままで表示されていたmScheduleの isSelectedをfalseにし、
     // 新しいやつをtrueにさせて画面に反映させる
 
@@ -123,24 +124,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // 以下の処理を今後メソッド化して、時間割追加作成時にも使用する
 
                     mSchedule = new ImageDataListContainer();   // 時間割新規作成
-                    mSchedule.setTimestamp(makeTimestamp());
+                    mSchedule.setTimestamp(makeTimestamp()); // 現時刻を保存。時間割識別に用いる
                     RealmList<ImageDataList> newSchedule = new RealmList<>();
                     mSchedule.setClassSchedule(newSchedule); // 講義情報未登録のリスト
 
                     RealmList<ImageDataList> lists = mSchedule.getClassSchedule();
 
-                    /* 科目表示を動的に変更できるかチェック */
-                    ImageDataList sampleAlbum = new ImageDataList();
+/*                    *//* 科目表示を動的に変更できるかチェック *//*
+                    ImageDataList sampleAlbum = new ImageDataList();      // schedule, position, nameが最低限登録できればOK
+
+                    sampleAlbum.setSchedule(mSchedule.getTimestamp());
+                    sampleAlbum.setTimestamp(makeTimestamp());
                     sampleAlbum.setPosition(R.id.sbj11);
                     sampleAlbum.setName("sample1");
 
-                    ImageDataList sampleAlbum2 = new ImageDataList();
-                    sampleAlbum2.setPosition(R.id.sbj22);
-                    sampleAlbum2.setName("sample2");
 
-                    lists.add(sampleAlbum);
-                    lists.add(sampleAlbum2);
+                    RealmList<ImageData> firstAlbum = new RealmList<>();
+                    sampleAlbum.setAlbum(firstAlbum);
 
+                    realm.copyToRealm(sampleAlbum);
+
+                    lists.add(sampleAlbum);*/
+
+
+
+                    mSchedule.setClassSchedule(lists);
 
 
                     mSchedule.setSelected(true); // これを
@@ -158,14 +166,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mSchedule.setHasT8(false);
                     mSchedule.setHasT9(false);
                     mSchedule.setHasT10(false);
+
+
+
                 }
-                realm.copyToRealm(mSchedule); // これから反映させる時間割の情報をRealmに保存
+                realm.copyToRealm(mSchedule);
+                // これから反映させる時間割の情報をRealmに保存
             }
         });
     }
 
     public void editClassScheduleView() { // 月~金 or 月~土 or 月~日, ~5or6or7限 のみ実装済み
-        //　デフォルト(月〜金、1~5限)と異なる場合は、ボタンのvisiblityを変更する
+        //　デフォルト(月〜金、1~5限)と異なる場合は、ボタンのvisibilityを変更する
         //　ただし、6限がなくて7限がある、という状況は避ける。
 
         if (mSchedule.hasSaturday()) { // 1~5限まで土曜日を出現
@@ -208,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void editSubjectView() {
+    public void editSubjectView() { // 保存された各科目情報を時間割に反映
 
         RealmList<ImageDataList> lists = mSchedule.getClassSchedule(); // 科目情報リストを取得
 
@@ -227,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
-
                 button.setText(album.getName());
                 // 色の変更もここに書く
             }
@@ -235,12 +246,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    // mScheduleの持つリストからImageDataListを取り出し、
-    // それの持つ情報をカスタムしたImageViewに反映させる
-
-
     // タイムスタンプ作成
-    public final String makeTimestamp() {
+    public static final String makeTimestamp() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss"); // 日時データを元に文字列を形成
         final String nowStr = dateFormat.format(new Date(System.currentTimeMillis()));
 
@@ -250,20 +257,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /* タップ： ギャラリー(アルバム)へ移動*/
     @Override
-    public void onClick(View v) {
+    public void onClick(View view) {
 
-        // アルバムに時間割が紐づいていなければ、ここでmScheduleに紐づける
+        /* タップされたx曜日y限がmScheduleに未登録なら、RegisterActivityへ移動 */
 
+        String schedule = mSchedule.getTimestamp();
+        int position = view.getId();
 
+        ImageDataList data = realm.where(ImageDataList.class)
+                .equalTo("schedule", schedule) // いま開いている時間割のなかに
+                .equalTo("position", position) // いまタップした科目が登録されているか
+                .findFirst();
+
+        if (data == null) {
+            Intent to_register = new Intent(this, RegisterActivity.class);
+            to_register.putExtra("schedule", schedule);
+            to_register.putExtra("position", position);
+            startActivity(to_register); // 科目登録画面へ
+            return;
+        }
+
+        /* タップされたx曜日y限がmScheduleに登録済みなら、DetailActivityへ移動 */
         Intent to_gallery = new Intent(this, DetailActivity.class);
 
-
-        //もし科目名などが登録されていれば、Intent.extraで渡して、DetailActivityのバーに表示
-
-        to_gallery.putExtra("imageUri", uri.toString());
-        // 科目情報もIntentに持たせる
+        to_gallery.putExtra("list_id", data.getTimestamp());
 
 
+/*        to_gallery.putExtra("timestamp", data.getTimestamp()); // timestampでImageDataListを特定
+        to_gallery.putExtra("schedule", schedule);
+        to_gallery.putExtra("position", position);*/
+        to_gallery.putExtra("from", "onClick");
         startActivity(to_gallery); // 科目別アルバム(DetailActivity)へ飛ぶ
     }
 
@@ -271,6 +294,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /* 長押し：カメラの起動 */
     @Override
     public boolean onLongClick(final View view) {
+
+        /* タップされたx曜日y限がmScheduleに未登録なら、RegisterActivityへ移動   (onClickのはじめと同じ処理)*/
+        String schedule = mSchedule.getTimestamp();
+        int position = view.getId();
+
+        final ImageDataList data = realm.where(ImageDataList.class)
+                .equalTo("schedule", schedule) // いま開いている時間割のなかに
+                .equalTo("position", position) // いまタップした科目が登録されているか
+                .findFirst();
+
+        if (data == null) {
+            Intent to_register = new Intent(this, RegisterActivity.class);
+            to_register.putExtra("schedule", schedule);
+            to_register.putExtra("position", position);
+            startActivity(to_register); // 科目登録画面へ
+            return true;
+        }
 
         // WRITE_EXTERNAL_IMAGE が未許可の場合
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -282,9 +322,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return true;  // 戻り値をtrueにするとOnClickイベントは発生しない(falseだと最後にonClickイベント発生)
         }
 
-        final String nowStr = makeTimestamp(); // カメラ起動時の日時取得
 
-        String fileName = "ClassLog_" + nowStr + ".jpg"; // 保存する画像のファイル名を生成
+        final String nowStr = makeTimestamp(); // カメラ起動時の日時取得
+        String fileName = data.getName() + nowStr + ".jpg"; // 保存する画像のファイル名を生成
 
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, fileName); // 画像ファイル名を設定
@@ -293,19 +333,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ContentResolver resolver = getContentResolver();
         uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); // URI作成
 
-        Log.d("view.getID", String.valueOf(view.getId()));
-
-
         // カメラ起動　ー＞　撮影　ー＞　保存（ ー＞連続撮影 ）　ー＞　科目別アルバム(DetailActivity)へ
 
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+
                 /* イメージの作成 (撮影前に、すべての情報を保存)   -> キャンセルされたときの処理も追加　or DetailActivityでこの処理を行う    */
-                ImageData image = realm.createObject(ImageData.class);
-                image.setTimestamp(nowStr);
+
+                image = realm.createObject(ImageData.class, nowStr); // subject, timestamp, uriが最低限登録できればOK
+
+                image.setSubject(data.getTimestamp());
+                //image.setTimestamp(nowStr);
                 image.setUri(uri.toString());
-                image.setSubject(view.getId() + "");
+
                 Log.d("subject", image.getSubject());
 
                 image.setName(((Button) view).getText() + "_" + nowStr);
@@ -313,11 +354,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, REQUEST_CODE_CAMERA);
 
+        // カメラの起動はonAcrivityMethodで行う
 
         return true;    // 戻り値をtrueにするとOnClickイベントは発生しない(falseだと最後にonClickイベント発生)
     }
@@ -340,16 +381,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Bitmap bmp = (Bitmap) intent.getExtras().get("data");
                 //imageView.setImageBitmap(bmp);
 
-                Toast.makeText(MainActivity.this, "画像を保存しました", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "画像を保存しました", Toast.LENGTH_SHORT).show();
 
-                Intent intent_main = new Intent(this, DetailActivity.class);
-                intent_main.putExtra("imageUri", uri.toString());
-                // 科目情報もIntentに持たせる
-                startActivity(intent_main); // 科目別アルバム(DetailActivity)へ飛ぶ
+                Intent to_detail = new Intent(this, DetailActivity.class);
+                to_detail.putExtra("list_id", image.getSubject());
+                to_detail.putExtra("image_id", image.getTimestamp());
+                /*to_detail.putExtra("subject", image.getSubject());
+                to_detail.putExtra("timestamp", image.getTimestamp());*/
+                to_detail.putExtra("from", "onLongClick"); // ボタンの長押し->撮影->ギャラリー
+                startActivity(to_detail); // 科目別アルバム(DetailActivity)へ飛ぶ
             }
         } else if (resultCode == RESULT_CANCELED) {
             // キャンセルされたらToastを表示
-            Toast.makeText(MainActivity.this, "CANCELED", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "CANCELED", Toast.LENGTH_SHORT).show();
         }
     }
 

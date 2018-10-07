@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,6 +24,10 @@ public class DetailActivity extends AppCompatActivity {
     private GalleryAdapter mAdapter;
     private RecyclerView recyclerView;
 
+    private Intent intent;
+    private RealmList<ImageData> album;
+    private ImageDataList data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,11 +36,10 @@ public class DetailActivity extends AppCompatActivity {
         // realmを開く
         realm = Realm.getDefaultInstance();
 
+        /* 画面部品の諸設定 */
         recyclerView = findViewById(R.id.recycler_view);
-
         images = new ArrayList<>();
         mAdapter = new GalleryAdapter(getApplicationContext(), images);
-
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -60,62 +64,65 @@ public class DetailActivity extends AppCompatActivity {
             }
         }));
 
+        // 見るだけの時と、撮影後のときで処理を分ける
+        intent = getIntent();
+        String from = intent.getStringExtra("from");
+
+        /* この科目のアルバムを取得 */
+        data = realm.where(ImageDataList.class)
+                .equalTo("timestamp", intent.getStringExtra("list_id"))
+                .findFirst(); // 科目名に対応したアルバムを指定
+
+        if(from.equals("onLongClick")){
+            saveNewImage();
+        }
         fetchImages();
     }
 
-    // 撮影した写真を、その科目の画像一覧に追加 & その画像一覧を取得 (imagesに,imageDataAlbumの中身を入れる)
-    private void fetchImages() {
+    // 撮影した写真を、その科目の画像一覧に追加
+    private void saveNewImage() {
         realm.executeTransaction(new Realm.Transaction(){
             @Override
             public void execute(Realm realm){
                 Intent intent = getIntent();
-                ImageData new_image = realm.where(ImageData.class).equalTo("uri",
-                        intent.getStringExtra("imageUri")).findFirst(); // 撮影した画像データを取得
-                Log.d("new_image.getSubject()", new_image.getSubject());
 
-                ImageDataList data = realm.where(ImageDataList.class).equalTo("subject",
-                        new_image.getSubject()).findFirst(); // 科目名に対応したアルバムを指定
+                /* 撮影した画像データを取得 */
+                ImageData new_image = realm.where(ImageData.class)
+                        .equalTo("timestamp", intent.getStringExtra("image_id"))
+                        .findFirst();
 
-                if(data == null){
-                    data = new ImageDataList();   // 該当する科目のアルバムが未作成であれば、新規作成
-
-
-                    //メソッドの変更によりエラー。あとで修正。
-                    //data.setSubject(new_image.getSubject());
-
-
-                    Log.d("new_image.getSubject()", new_image.getSubject());
-                    RealmList<ImageData> firstAlbum = new RealmList<>();
-                    data.setAlbum(firstAlbum);
-                }
-
-                RealmList<ImageData> lists = data.getAlbum();
-//                if(lists == null) lists = new ArrayList<>();
-                lists.add(new_image);
-                data.setAlbum(lists);
+                /* アルバムに写真を追加 */
+                album = data.getAlbum();
+                album.add(new_image);
+                data.setAlbum(album);
 
                 realm.copyToRealm(data);
-
-
-/*
-                List<ImageData> lists = new ArrayList<>();
-                lists.add(new_image);*/
-
-                images.clear();
-                for(ImageData image : lists){
-                    images.add(image); // 表示される画像一覧(images)に、albumの中身を反映
-                }
-                Log.d("images.size", String.valueOf(images.size()));
             }
         });
-        mAdapter.notifyDataSetChanged();
     }
 
+    // 表示する画像一覧を取得
+    private void fetchImages(){
+
+        images.clear();
+
+        album = data.getAlbum();
+
+        if(album.isEmpty()){
+            Toast.makeText(DetailActivity.this, "写真はまだ登録されていません", Toast.LENGTH_SHORT).show();
+        }
+
+        for(ImageData image : album){
+            images.add(image); // albumの中身を全てコピー
+        }
+        Log.d("images.size", String.valueOf(images.size()));
+        mAdapter.notifyDataSetChanged(); // 画面に変更を反映
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        deleteDirectoryTree(getApplicationContext().getCacheDir()); // 今までのキャッシュを削除
+        deleteDirectoryTree(getApplicationContext().getCacheDir()); // Glideが保存したキャッシュを削除
         realm.close(); // realmを閉じる
     }
 

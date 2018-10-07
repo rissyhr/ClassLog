@@ -1,12 +1,14 @@
 package android.lifeistech.com.classlog;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class ImageData extends RealmObject {
 
     /* "アルバム"に保存される”写真” */
 
     private String subject; // // 自分の所属する科目名(=ImageDataList.timestamp)
+    @PrimaryKey
     private String timestamp; // 撮影日時
 
     private String uri; // 画像の保存場所

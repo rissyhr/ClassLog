@@ -3,6 +3,7 @@ package android.lifeistech.com.classlog;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
+
 public class ImageDataListContainer extends RealmObject {
 
     /* 複数のアルバム(ImageDataList)を所持する時間割 */

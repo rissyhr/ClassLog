@@ -2,14 +2,19 @@ package android.lifeistech.com.classlog;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class ImageDataList extends RealmObject {
 
     /* 各科目の"アルバム" */
     private String schedule; // 自分の所属する時間割名 (=ImageDataListContainer.timestamp)
+    @PrimaryKey
     private String timestamp; // 新規作成日時
 
     private String name; //　科目名　(画面表示用)
+    private String teacher;
+    private String room;
+
     // ここに、テーマカラーもかく　教員名も教室もメモも保存？
     private int position; // 何曜何限か (R.id.sbjXX と同じ値)
     private RealmList<ImageData> album;
@@ -37,6 +42,22 @@ public class ImageDataList extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
     }
 
     public int getPosition() {
