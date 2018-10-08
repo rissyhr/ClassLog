@@ -4,7 +4,7 @@ apply plugin: 'realm-android'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "android.lifeistech.com.classlog"
+        applicationId "com.lifeistech.android.classlog"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
@@ -27,6 +27,7 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.github.chrisbanes:PhotoView:2.1.4'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
 
 

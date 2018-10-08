@@ -28,7 +28,8 @@
             <EditText
                 android:id="@+id/subject"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="text" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -41,7 +42,8 @@
                 android:id="@+id/teacher"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="" />
+                android:autofillHints=""
+                android:inputType="text" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -53,7 +55,8 @@
             <EditText
                 android:id="@+id/room"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="text" />
 
             <Button
                 android:id="@+id/register"
@@ -61,7 +64,8 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
-                android:text="登録" />
+                android:text="新規登録する"
+                android:textColor="@color/colorPrimaryDark" />
         </LinearLayout>
 
     </LinearLayout>

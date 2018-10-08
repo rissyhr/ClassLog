@@ -197,51 +197,60 @@
 
                     <Button
                         android:id="@+id/sbj00"
-                        style="@style/Widget.AppCompat.Button.Colored"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:layout_weight="1"
-                        android:text="数理統計学" />
+                        android:autoText="false"
+                        android:freezesText="false"
+                        android:tag="月曜日1時限" />
 
                     <Button
                         android:id="@+id/sbj01"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="火曜日1時限" />
+
 
                     <Button
                         android:id="@+id/sbj02"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="水曜日1時限"/>
 
                     <Button
                         android:id="@+id/sbj03"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="木曜日1時限"/>
 
                     <Button
                         android:id="@+id/sbj04"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="金曜日1時限"/>
 
                     <Button
                         android:id="@+id/sbj05"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="土曜日1時限"/>
+
 
                     <Button
                         android:id="@+id/sbj06"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="日曜日1時限"/>
 
 
                 </LinearLayout>
@@ -257,45 +266,52 @@
                         android:id="@+id/sbj10"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="月曜日2時限"/>
 
                     <Button
                         android:id="@+id/sbj11"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="火曜日2時限"/>
 
                     <Button
                         android:id="@+id/sbj12"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="水曜日2時限"/>
 
                     <Button
                         android:id="@+id/sbj13"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="木曜日2時限"/>
 
                     <Button
                         android:id="@+id/sbj14"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="金曜日2時限"/>
 
                     <Button
                         android:id="@+id/sbj15"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="土曜日2時限"/>
 
                     <Button
                         android:id="@+id/sbj16"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="日曜日2時限"/>
 
                 </LinearLayout>
 
@@ -310,45 +326,52 @@
                         android:id="@+id/sbj20"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="月曜日3時限"/>
 
                     <Button
                         android:id="@+id/sbj21"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="火曜日3時限"/>
 
                     <Button
                         android:id="@+id/sbj22"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="水曜日3時限"/>
 
                     <Button
                         android:id="@+id/sbj23"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="木曜日3時限"/>
 
                     <Button
                         android:id="@+id/sbj24"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="金曜日3時限"/>
 
                     <Button
                         android:id="@+id/sbj25"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="土曜日3時限"/>
 
                     <Button
                         android:id="@+id/sbj26"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="日曜日3時限"/>
 
                 </LinearLayout>
 
@@ -365,45 +388,52 @@
                         android:id="@+id/sbj30"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="月曜日4時限"/>
 
                     <Button
                         android:id="@+id/sbj31"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="火曜日4時限"/>
 
                     <Button
                         android:id="@+id/sbj32"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="水曜日4時限"/>
 
                     <Button
                         android:id="@+id/sbj33"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="木曜日4時限"/>
 
                     <Button
                         android:id="@+id/sbj34"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="金曜日4時限"/>
 
                     <Button
                         android:id="@+id/sbj35"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="土曜日4時限"/>
 
                     <Button
                         android:id="@+id/sbj36"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="日曜日4時限"/>
 
                 </LinearLayout>
 
@@ -419,45 +449,52 @@
                         android:id="@+id/sbj40"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="月曜日5時限"/>
 
                     <Button
                         android:id="@+id/sbj41"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="火曜日5時限"/>
 
                     <Button
                         android:id="@+id/sbj42"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="水曜日5時限"/>
 
                     <Button
                         android:id="@+id/sbj43"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="木曜日5時限"/>
 
                     <Button
                         android:id="@+id/sbj44"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:tag="金曜日5時限"/>
 
                     <Button
                         android:id="@+id/sbj45"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="土曜日5時限"/>
 
                     <Button
                         android:id="@+id/sbj46"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="日曜日5時限"/>
 
                 </LinearLayout>
 
@@ -475,49 +512,56 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="月曜日6時限"/>
 
                     <Button
                         android:id="@+id/sbj51"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="火曜日6時限"/>
 
                     <Button
                         android:id="@+id/sbj52"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="水曜日6時限"/>
 
                     <Button
                         android:id="@+id/sbj53"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="木曜日6時限"/>
 
                     <Button
                         android:id="@+id/sbj54"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="金曜日6時限"/>
 
                     <Button
                         android:id="@+id/sbj55"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="土曜日6時限"/>
 
                     <Button
                         android:id="@+id/sbj56"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="日曜日6時限"/>
 
                 </LinearLayout>
 
@@ -535,49 +579,56 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="月曜日7時限"/>
 
                     <Button
                         android:id="@+id/sbj61"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="火曜日7時限"/>
 
                     <Button
                         android:id="@+id/sbj62"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="水曜日7時限"/>
 
                     <Button
                         android:id="@+id/sbj63"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="木曜日7時限"/>
 
                     <Button
                         android:id="@+id/sbj64"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="金曜日7時限"/>
 
                     <Button
                         android:id="@+id/sbj65"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="土曜日7時限"/>
 
                     <Button
                         android:id="@+id/sbj66"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:tag="日曜日7時限"/>
 
                 </LinearLayout>
 

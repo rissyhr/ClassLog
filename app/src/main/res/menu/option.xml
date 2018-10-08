@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/m1"
+        android:title="画像をインポート" />
+    <item
+        android:id="@+id/m2"
+        android:title="講義情報の変更" />
+</menu>
