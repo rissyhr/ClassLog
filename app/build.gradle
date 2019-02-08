@@ -4,7 +4,7 @@ apply plugin: 'realm-android'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.lifeistech.android.classlog"
+        applicationId "com.rissy.android.classlog"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 2

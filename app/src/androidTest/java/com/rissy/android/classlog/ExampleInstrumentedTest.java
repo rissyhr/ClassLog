@@ -1,4 +1,4 @@
-package com.lifeistech.android.classlog;
+package com.rissy.android.classlog;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

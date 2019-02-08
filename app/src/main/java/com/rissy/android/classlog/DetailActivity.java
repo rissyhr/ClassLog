@@ -1,4 +1,4 @@
-package com.lifeistech.android.classlog;
+package com.rissy.android.classlog;
 
 import android.Manifest;
 import android.content.ContentResolver;
@@ -31,9 +31,9 @@ import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmList;
 
-import static com.lifeistech.android.classlog.MainActivity.REQUEST_CODE_CAMERA;
-import static com.lifeistech.android.classlog.MainActivity.REQUEST_PERMISSION;
-import static com.lifeistech.android.classlog.MainActivity.makeTimestamp;
+import static com.rissy.android.classlog.MainActivity.REQUEST_CODE_CAMERA;
+import static com.rissy.android.classlog.MainActivity.REQUEST_PERMISSION;
+import static com.rissy.android.classlog.MainActivity.makeTimestamp;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener{
 

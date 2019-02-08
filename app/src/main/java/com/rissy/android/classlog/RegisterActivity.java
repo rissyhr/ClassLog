@@ -1,4 +1,4 @@
-package com.lifeistech.android.classlog;
+package com.rissy.android.classlog;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
