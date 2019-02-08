@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageDataListContainer mSchedule; // アプリ起動時に表示される時間割(を持つコンテナ) 。　-> アルバム/写真の新規作成時に紐づける
 
+    private Intent intent_camera;   // ボタン長押し->カメラ起動のとき使用。
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -361,10 +363,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        intent.putExtra("何曜何限", (String)view.getTag());
-        startActivityForResult(intent, REQUEST_CODE_CAMERA);
+        intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        intent_camera.putExtra("何曜何限", (String)view.getTag());
+        startActivityForResult(intent_camera, REQUEST_CODE_CAMERA);
 
         // カメラの起動はonAcrivityMethodで行う
 
@@ -397,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 /*to_detail.putExtra("subject", image.getSubject());
                 to_detail.putExtra("timestamp", image.getTimestamp());*/
                 to_detail.putExtra("from", "onLongClick"); // ボタンの長押し->撮影->ギャラリー
-                to_detail.putExtra("何曜何限", intent.getStringExtra("何曜何限"));
+                to_detail.putExtra("何曜何限", intent_camera.getStringExtra("何曜何限"));
                 startActivity(to_detail); // 科目別アルバム(DetailActivity)へ飛ぶ
             }
         } else if (resultCode == RESULT_CANCELED) {

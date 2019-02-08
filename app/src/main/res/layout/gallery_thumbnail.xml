@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.lifeistech.com.classlog.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.lifeistech.android.classlog.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -18,4 +18,4 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop" />
-</android.lifeistech.com.classlog.SquareLayout>
+</com.lifeistech.android.classlog.SquareLayout>
