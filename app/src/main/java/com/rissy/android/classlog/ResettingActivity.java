@@ -78,7 +78,7 @@ public class ResettingActivity extends AppCompatActivity implements View.OnClick
 
             Intent to_gallery = new Intent(this, DetailActivity.class);
 
-            to_gallery.putExtra("list_id", renewAlbum.getTimestamp());
+            to_gallery.putExtra("list_id", renewAlbum.getListID());
             to_gallery.putExtra("from", "resetting");
 
             startActivity(to_gallery); // 科目別アルバム(DetailActivity)へ飛ぶ

@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     newAlbum = new ImageDataList(); // 科目の新規作成
 
                     newAlbum.setSchedule(schedule.getTimestamp()); // 所属する時間割との紐付け
-                    newAlbum.setTimestamp(MainActivity.makeTimestamp());
+                    newAlbum.setListID(MainActivity.makeTimestamp());
                     newAlbum.setPosition(intent.getIntExtra("position", 0));
 
                     newAlbum.setName(subject);
@@ -84,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             /* タップされたx曜日y限がmScheduleに登録済みなら、DetailActivityへ移動 */
             Intent to_gallery = new Intent(this, DetailActivity.class);
 
-            to_gallery.putExtra("list_id", newAlbum.getTimestamp());
+            to_gallery.putExtra("list_id", newAlbum.getListID());
 /*            to_gallery.putExtra("timestamp", newAlbum.getTimestamp());
             to_gallery.putExtra("schedule", schedule.getTimestamp());
             to_gallery.putExtra("position", newAlbum.getPosition());*/

@@ -7,9 +7,9 @@ import io.realm.annotations.PrimaryKey;
 public class ImageDataList extends RealmObject {
 
     /* 各科目の"アルバム" */
-    private String schedule; // 自分の所属する時間割名 (=ImageDataListContainer.timestamp)
+    private String schedule; // 自分の所属する時間割名 (=ImageDataListContainer.listID)
     @PrimaryKey
-    private String timestamp; // 新規作成日時
+    private String timestamp; // 新規作成日時のこと
 
     private String name; //　科目名　(画面表示用)
     private String teacher;
@@ -29,12 +29,12 @@ public class ImageDataList extends RealmObject {
         this.schedule = schedule;
     }
 
-    public String getTimestamp() {
+    public String getListID() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setListID(String listID) {
+        timestamp = listID;
     }
 
     public String getName() {

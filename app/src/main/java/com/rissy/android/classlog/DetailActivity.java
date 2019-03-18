@@ -20,7 +20,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -32,6 +31,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 
 import static com.rissy.android.classlog.MainActivity.REQUEST_CODE_CAMERA;
+import static com.rissy.android.classlog.MainActivity.REQUEST_CODE_PHOTO;
 import static com.rissy.android.classlog.MainActivity.REQUEST_PERMISSION;
 import static com.rissy.android.classlog.MainActivity.makeTimestamp;
 
@@ -114,6 +114,15 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 int id = menuItem.getItemId();
                 if (id == R.id.m1) { // 画像をインポート
                     Toast.makeText(DetailActivity.this, "この機能は現在利用できません", Toast.LENGTH_SHORT).show();
+
+
+                    /* 以下はエラーを含むためコメントアウト。画像一覧は問題ないが、フラグメントに画像が表示されない。
+
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, REQUEST_CODE_PHOTO);
+
+                    */
                     return true;
                 } else if(id == R.id.m2){ // 講義情報を変更する
                     Intent to_resetting = new Intent(getApplicationContext(), ResettingActivity.class);
@@ -157,8 +166,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                         return;
                     }
 
-                    final String nowStr = makeTimestamp(); // カメラ起動時の日時取得
-                    String fileName = data.getName() + nowStr + ".jpg"; // 保存する画像のファイル名を生成
+                    final String timestamp = makeTimestamp(); // カメラ起動時の日時取得
+                    String fileName = data.getName() + timestamp + ".jpg"; // 保存する画像のファイル名を生成
 
                     ContentValues values = new ContentValues();
                     values.put(MediaStore.Images.Media.TITLE, fileName); // 画像ファイル名を設定
@@ -174,15 +183,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                         public void execute(Realm realm) {
 
                             /* イメージの作成 (撮影前に、すべての情報を保存)   -> キャンセルされたときの処理も追加　or DetailActivityでこの処理を行う    */
-                            image = realm.createObject(ImageData.class, nowStr); // subject, timestamp, uriが最低限登録できればOK
+                            image = realm.createObject(ImageData.class, timestamp); // subject, timestamp, uriが最低限登録できればOK
 
-                            image.setSubject(data.getTimestamp());
-                            //image.setTimestamp(nowStr);
+                            image.setSubject(data.getListID());
                             image.setUri(uri.toString());
-
-                            Log.d("subject", image.getSubject());
-
-                            image.setName(data.getName() + "_" + nowStr);
+                            image.setName(data.getName() + "_" + timestamp);
                             realm.copyToRealm(image);
                         }
                     });
@@ -203,23 +208,62 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
         if (resultCode == RESULT_OK) {
+
+            /* 写真撮影後の処理 */
             if (requestCode == REQUEST_CODE_CAMERA) {
-                //Bitmap bmp = (Bitmap) intent.getExtras().get("data");
-                //imageView.setImageBitmap(bmp);
 
                 Toast.makeText(DetailActivity.this, "Saved.", Toast.LENGTH_SHORT).show();
 
                 Intent to_detail = new Intent(this, DetailActivity.class);
+                /* ↑画面を更新(=撮影した写真をリストに追加)するために、いまと同じアクティビティに遷移する処理を書いている。
+                    正しく動作はするが、本来は更新メソッドを書くべきだと思う。
+                 */
+
                 to_detail.putExtra("list_id", image.getSubject());
                 to_detail.putExtra("image_id", image.getTimestamp());
-                /*to_detail.putExtra("subject", image.getSubject());
-                to_detail.putExtra("timestamp", image.getTimestamp());*/
-                to_detail.putExtra("from", "onLongClick"); // ボタンの長押し->撮影->ギャラリー
+
+                to_detail.putExtra("from", "onLongClick");
+                // ↑これは、saveNewImageメソッドを呼び出すため。名前がややこしいので修正すべき。
+
                 startActivity(to_detail); // 科目別アルバム(DetailActivity)へ飛ぶ
+                finish();
+
+
+            /* スマホ本体のギャラリーで画像選択後の処理 */
+            }else if (requestCode == REQUEST_CODE_PHOTO) {
+
+                final Uri uri = intent.getData();
+
+                // 注意：イメージの作成は、
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        /* イメージの作成 */
+                        final String timestamp = makeTimestamp();
+
+                        image = realm.createObject(ImageData.class, timestamp); // subject, timestamp, uriが最低限登録できればOK
+                        image.setSubject(data.getListID());
+                        image.setUri(uri.toString());
+
+                        Log.d("subject", image.getSubject());
+
+                        image.setName(data.getName() + "_" + timestamp);
+                        realm.copyToRealm(image);
+                    }
+                });
+
+                // 以下は REQUEST_CODE_CAMERA と同じ処理。 (トーストのメッセージ以外)
+                Toast.makeText(DetailActivity.this, "Added.", Toast.LENGTH_SHORT).show();
+
+                Intent to_detail = new Intent(this, DetailActivity.class);
+                to_detail.putExtra("list_id", image.getSubject());
+                to_detail.putExtra("image_id", image.getTimestamp());
+                to_detail.putExtra("from", "onLongClick");
+                startActivity(to_detail);
                 finish();
             }
         } else if (resultCode == RESULT_CANCELED) {

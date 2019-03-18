@@ -12,8 +12,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -29,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     static final int REQUEST_PERMISSION = 0;
     static final int REQUEST_CODE_CAMERA = 1;
+    static final int REQUEST_CODE_PHOTO = 2;
 
     public Realm realm;
 
@@ -287,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /* タップされたx曜日y限がmScheduleに登録済みなら、DetailActivityへ移動 */
         Intent to_gallery = new Intent(this, DetailActivity.class);
 
-        to_gallery.putExtra("list_id", data.getTimestamp());
+        to_gallery.putExtra("list_id", data.getListID());
 
 
 /*        to_gallery.putExtra("timestamp", data.getTimestamp()); // timestampでImageDataListを特定
@@ -352,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 image = realm.createObject(ImageData.class, nowStr); // subject, timestamp, uriが最低限登録できればOK
 
-                image.setSubject(data.getTimestamp());
+                image.setSubject(data.getListID());
                 //image.setTimestamp(nowStr);
                 image.setUri(uri.toString());
 
