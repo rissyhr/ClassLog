@@ -69,12 +69,9 @@ public class ResettingActivity extends AppCompatActivity implements View.OnClick
             realm.executeTransaction(new Realm.Transaction(){
                 @Override
                 public void execute(Realm realm){
-
                     renewAlbum.setName(subject);
                     renewAlbum.setTeacher(teacher);
                     renewAlbum.setRoom(room);
-
-                    realm.copyToRealmOrUpdate(renewAlbum);
                 }
             });
 
